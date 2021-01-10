@@ -5,6 +5,8 @@ const ytdl = require("ytdl-core");
 const {YTSearcher} = require("ytsearcher");
 const ytbsr = new YTSearcher(process.env.YTB_KEY);
 const fs = require("fs");
+const axios = require("axios");
+
 const prefix = "yo";
 
 client.on('ready', () => {
@@ -46,6 +48,21 @@ client.on('message', async msg => {
 			}
 		}
 
+		if (args[1] === "nasa") {
+			axios.get(`https://api.nasa.gov/planetary/apod?api_key=${process.env.NASA_TOKEN}`)
+				.then(res => {
+					const data = res.data;
+					const embed = new Discord.MessageEmbed()
+						.setColor('#0099ff')
+						.setTitle(data.title)
+						.setDescription(data.explanation)
+						.setThumbnail(data.url)
+						.setImage(data.hdurl)
+						.setFooter(data.date, 'https://cdn.iconscout.com/icon/free/png-256/nasa-5-569227.png');
+					msg.channel.send(embed);
+				});
+		}
+
 		if (args[1] == "play" && args[2] && msg.member.voice.channel) {
 			const query = msg.content.split("yo play")[1];
 			const streamOptions = {seek: 0, volume: 0.3};
@@ -53,6 +70,8 @@ client.on('message', async msg => {
 			msg.member.voice.channel.join().then(connection => {
 				ytbsr.search(args[2]).then(res => {
 					const stream = ytdl(res.first.url, {filter: "audioonly"});
+					if (dispatcher !== null)
+						dispatcher.destroy()
 					dispatcher = connection.play(stream, streamOptions)
 
 					dispatcher.on("start", start => {
