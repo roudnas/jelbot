@@ -6,7 +6,6 @@ const {YTSearcher} = require("ytsearcher");
 const ytbsr = new YTSearcher(process.env.YTB_KEY);
 const fs = require("fs");
 const axios = require("axios");
-
 const prefix = "yo";
 
 client.on('ready', () => {
@@ -40,7 +39,6 @@ client.on('message', async msg => {
 				dispatcher.pause();
 			}
 		}
-
 
 		if (args[1] == "resume") {
 			if (dispatcher !== null) {
