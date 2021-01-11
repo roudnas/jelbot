@@ -65,17 +65,18 @@ client.on('message', async msg => {
 
 		if (args[1] == "play" && args[2] && msg.member.voice.channel) {
 			const query = msg.content.split("yo play")[1];
-			const streamOptions = {seek: 0, volume: 0.3};
+			const streamOptions = {seek: 0, volume: 1};
 
 			msg.member.voice.channel.join().then(connection => {
 				ytbsr.search(args[2]).then(res => {
+					console.log(`new search: ${res.first.url}\n`)
 					const stream = ytdl(res.first.url, {filter: "audioonly"});
 					if (dispatcher !== null)
 						dispatcher.destroy()
 					dispatcher = connection.play(stream, streamOptions)
-
+					console.log(`new dispatcher request: ${connection} \n`);
 					dispatcher.on("start", start => {
-						msg.channel.send(`${res.first.url} Playing dat shit boost it up yoooooooooooo`);
+						msg.channel.send(`Playing dat shit boost it up yoooooooooooo \n${res.first.url}`);
 					})
 
 
